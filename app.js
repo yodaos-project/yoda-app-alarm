@@ -26,6 +26,9 @@ inherits(Alarm, EventEmitter)
 Alarm.prototype.initApplication = function initApplication (option) {
   var self = this
   option = {
+    created: () => {
+
+    },
     url: function url (urlObj) {
       logger.info('initApplication urlObj =====>', urlObj)
       if (urlObj && urlObj.pathname === '/add') {

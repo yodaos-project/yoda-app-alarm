@@ -1,11 +1,16 @@
 {
-  "name": "@yoda/alarm",
+  "name": "alarm",
   "version": "1.0.0",
-  "description": "Alarm App",
+  "description": "Alarm App for YodaOS",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./test.sh"
   },
+  "files": [
+    "*.js",
+    "convert-expression/*",
+    "test/*"
+  ],
   "manifest": {
     "daemon": false,
     "permission": [
