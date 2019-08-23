@@ -517,7 +517,7 @@ AlarmCore.prototype.getRepeatOption = function getRepeatOption (alarmData) {
     option = dayOfMonthOn
   } else if (repeatType === 5) { // year repeat
     var dayOfYearOn = alarmData.dayofyear_on
-    var monthDay = dayOfYearOn.split('_')
+    var monthDay = dayOfYearOn.split('-')
     var month = monthDay[0]
     var day = monthDay[1]
     option = day + ' ' + month
