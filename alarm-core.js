@@ -1,6 +1,7 @@
 
 'use strict'
 var fs = require('fs')
+var exec = require('child_process').exec
 var logger = require('logger')('alarm-core')
 var yodaUtil = require('@yoda/util')
 var network = require('@yoda/network')
@@ -37,6 +38,19 @@ function AlarmCore (api) {
   this.ringUrl = null
   this.mediaManager = new MediaManager(this)
   this.wifi = new network.NetworkAgent()
+}
+
+AlarmCore.prototype._writeConfig = function save (contents) {
+  fs.writeFile(CONFIGFILEPATH, contents, err => {
+    if (err) {
+      logger.error('alarm set config: update local data error', err && err.stack)
+    }
+    // just sync the config file to ensure that the operation is saved after crashed.
+    // FIXME(yorkie): use `fs.fsync` instead or `fs.sync`?
+    exec('sync', (err, stdout) => {
+      logger.info('sync data status', err)
+    })
+  })
 }
 
 /**
@@ -172,15 +186,7 @@ AlarmCore.prototype._setConfig = function (options) {
         logger.error('alarm set config: clear local data error', err.stack)
         return
       }
-      fs.writeFile(CONFIGFILEPATH, JSON.stringify(parseJson), (err) => {
-        if (err) {
-          logger.error('alarm set config: update local data error', err && err.stack)
-        }
-        // parseJson is empty, kill alarm
-        if (Object.keys(parseJson).length === 0) {
-          logger.log('_setConfig parseJson lenght is 0')
-        }
-      })
+      this._writeConfig(JSON.stringify(parseJson))
     })
   })
 }
@@ -399,11 +405,7 @@ AlarmCore.prototype.init = function (command, isUpdateNative) {
   isUpdateNative && flag && this._setConfig(options)
   // clear local data
   if (!flag) {
-    fs.writeFile(CONFIGFILEPATH, '{}', (err) => {
-      if (err) {
-        logger.error('alarm init: clear local data error', err.stack)
-      }
-    })
+    this._writeConfig('{}')
   }
 }
 
@@ -432,11 +434,7 @@ AlarmCore.prototype.createConfigFile = function () {
           logger.error('alarm create dir failed', err.stack)
           return
         }
-        fs.writeFile(CONFIGFILEPATH, '{}', function (err) {
-          if (err) {
-            logger.error('alarm write file failed', err.stack)
-          }
-        })
+        this._writeConfig('{}')
       })
     }
   })
