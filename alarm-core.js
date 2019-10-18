@@ -426,7 +426,7 @@ AlarmCore.prototype.formatAlarmDate = function formatAlarmDate (alarmDate) {
  * create local config file
  */
 AlarmCore.prototype.createConfigFile = function () {
-  fs.stat(CONFIGFILEPATH, function (err) {
+  fs.stat(CONFIGFILEPATH, (err) => {
     if (err) {
       logger.log('alarm no local config file', err.stack)
       yodaUtil.fs.mkdirp('/data/AppData/alarm', (err) => {
